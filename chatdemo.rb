@@ -3,6 +3,9 @@
 require 'bundler'
 Bundler.require :default
 require 'angelo/main'
+# Stupid-ass implementaion detail that ideally would be abstracted away.
+require 'tilt/haml'
+require 'tilt/erb'
 require File.join File.expand_path('..', __FILE__), 'chatdemo/redis'
 
 addr '0.0.0.0'
@@ -25,7 +28,7 @@ end
 # render the index page
 #
 get '/' do
-  erb :index
+  haml :index
 end
 
 # render wss for production, ws for dev
@@ -33,6 +36,7 @@ end
 get '/assets/js/application.js' do
   content_type :js
   @scheme = ENV['RACK_ENV'] == 'production' ? 'wss://' : 'ws://'
+  # This uses the compatibility-layer Angelo::Tilt::ERB#erb method.
   erb :application
 end
 
